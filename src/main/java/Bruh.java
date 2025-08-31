@@ -15,8 +15,8 @@ public class Bruh {
 
         Scanner in = new Scanner(System.in);
         String line;
-        String[] list = new String[100];
-        int listIndex = 0;
+        Task[] tasks = new Task[100];
+        int taskIndex = 0;
 
         while (true) {
             line = in.nextLine();
@@ -26,12 +26,21 @@ public class Bruh {
                 System.out.println("Adios");
                 break;
             } else if (line.equals("list")) {
+                System.out.println("Here are your tasks: ");
                 int idx = 0;
-                for (int i = 0; i < listIndex; i++) {
-                    System.out.println(i + 1 + ". " + list[i]);
+                for (int i = 0; i < taskIndex; i++) {
+                    System.out.println(i + 1 + ". [" + tasks[i].getStatusIcon() + "]" + tasks[i].getDescription());
                 }
+            } else if (line.startsWith("mark ")) {
+                int markIndex = -1 + Integer.parseInt(line.substring(5));
+                tasks[markIndex].setDone(true);
+                System.out.println("Marked as done: [X] " + tasks[markIndex].getDescription());
+            } else if (line.startsWith("unmark ")) {
+                int unmarkIndex = -1 + Integer.parseInt(line.substring(7));
+                tasks[unmarkIndex].setDone(false);
+                System.out.println("Marked as undone: [ ] " + tasks[unmarkIndex].getDescription());
             } else {
-                list[listIndex++] = line;
+                tasks[taskIndex++] = new Task(line);
                 System.out.println("    Added: " + line);
             }
             System.out.println("-----------------------------------------------------------------------------");
