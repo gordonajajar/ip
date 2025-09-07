@@ -1,16 +1,26 @@
 public class Task {
 
+    private static int numberOfTasks = 0;
 
-    protected String description;
-    protected boolean isDone;
+    private String description;
+    private boolean isDone;
 
     public Task(String description) {
         this.setDescription(description);
         this.isDone = false;
+        numberOfTasks++;
     }
 
     public String getStatusIcon() {
-        return (isDone ? "X" : " "); // mark done task with X
+        return (isDone ? "[X]" : "[ ]"); // mark done task with X
+    }
+
+    public static int getNumberOfTasks() {
+        return numberOfTasks;
+    }
+
+    public static void setNumberOfTasks(int numberOfTasks) {
+        Task.numberOfTasks = numberOfTasks;
     }
 
     public String getDescription() {
@@ -31,5 +41,10 @@ public class Task {
 
     public void setDone(boolean done) {
         isDone = done;
+    }
+
+    @Override
+    public String toString() {
+        return getDescription();
     }
 }

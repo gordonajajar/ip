@@ -16,36 +16,59 @@ public class Bruh {
         Scanner in = new Scanner(System.in);
         String line;
         Task[] tasks = new Task[100];
-        int taskIndex = 0;
 
         while (true) {
             line = in.nextLine();
 
             System.out.println("-----------------------------------------------------------------------------");
-            if (line.equals("bye")) {
-                System.out.println("Adios");
-                break;
-            } else if (line.equals("list")) {
-                System.out.println("Here are your tasks: ");
-                int idx = 0;
-                for (int i = 0; i < taskIndex; i++) {
-                    System.out.println(i + 1 + ". [" + tasks[i].getStatusIcon() + "]" + tasks[i].getDescription());
-                }
-            } else if (line.startsWith("mark ")) {
-                int markIndex = -1 + Integer.parseInt(line.substring(5));
-                tasks[markIndex].setDone(true);
-                System.out.println("Marked as done: [X] " + tasks[markIndex].getDescription());
-            } else if (line.startsWith("unmark ")) {
-                int unmarkIndex = -1 + Integer.parseInt(line.substring(7));
-                tasks[unmarkIndex].setDone(false);
-                System.out.println("Marked as undone: [ ] " + tasks[unmarkIndex].getDescription());
-            } else {
-                tasks[taskIndex++] = new Task(line);
-                System.out.println("    Added: " + line);
+
+            if (line.isEmpty()) {
+                System.out.println("Please enter something.");
+                continue;
             }
+            String[] input = line.split(" ", 2);
+            String command = input[0].toLowerCase();
+
+            if (parseInput(command, tasks, input)) return;
+
             System.out.println("-----------------------------------------------------------------------------");
         }
     }
 
+    private static boolean parseInput(String command, Task[] tasks, String[] input) {
+        switch (command) {
+        case "bye":
+            System.out.println("Adios");
+            return true;
+        case "list":
+            System.out.println("Here are your tasks: ");
+            for (int i = 0; i < Task.getNumberOfTasks(); i++) {
+                System.out.println(i + 1 + ". " + tasks[i].toString());
+            }
+            break;
+        case "todo":
+            tasks[Task.getNumberOfTasks()] = new Todo(input[1]);
+            break;
+        case "deadline":
+            String[] deadlineInput = input[1].split(" /by ", 2);
+            tasks[Task.getNumberOfTasks()] = new Deadline(deadlineInput[0], deadlineInput[1]);
+            break;
+        case "event":
+            String[] eventInput = input[1].split((" /from | /to "), 3);
+            tasks[Task.getNumberOfTasks()] = new Event(eventInput[0], eventInput[1], eventInput[2]);
+            break;
+        case "mark":
+            int markIndex = -1 + Integer.parseInt(input[1]);
+            tasks[markIndex].setDone(true);
+            System.out.println("Marked as done: [X] " + tasks[markIndex].getDescription());
+            break;
+        case "unmark":
+            int unmarkIndex = -1 + Integer.parseInt(input[1]);
+            tasks[unmarkIndex].setDone(false);
+            System.out.println("Marked as undone: [ ] " + tasks[unmarkIndex].getDescription());
+            break;
+        }
+        return false;
+    }
 
 }
