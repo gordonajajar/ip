@@ -1,3 +1,7 @@
+package tasks;
+
+import exceptions.EmptyDescriptionException;
+
 public class Task {
 
     private static int numberOfTasks = 0;
@@ -40,12 +44,10 @@ public class Task {
 
     public void setDone() {
         isDone = true;
-        System.out.println("Marked as done: [X] " + this.getDescription());
     }
 
     public void setUndone() {
         isDone = false;
-        System.out.println("Marked as undone: [ ] " + this.getDescription());
     }
 
     @Override
