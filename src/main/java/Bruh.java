@@ -1,18 +1,27 @@
 import java.util.Scanner;
 
+import exceptions.EmptyDescriptionException;
+import exceptions.WrongTaskNumberException;
+import tasks.Deadline;
+import tasks.Event;
+import tasks.Task;
+import tasks.Todo;
+
 public class Bruh {
 
     public static final int MAX_TASKS_LENGTH = 100;
 
     public static void main(String[] args) {
-        String logo = "Hello! I'm:\n" +
-                " ____  ____  _   _ _   _ \n" +
-                "| __ )|  _ \\| | | | | | |\n" +
-                "|  _ \\| |_) | | | | |_| |\n" +
-                "| |_) |  _ <| |_| |  _  |\n" +
-                "|____/|_| \\_\\\\___/|_| |_|" +
-                "\n" +
-                "Type something: \n";
+        String logo = """
+                Hello! I'm:
+                 ____  ____  _   _ _   _\s
+                | __ )|  _ \\| | | | | | |
+                |  _ \\| |_) | | | | |_| |
+                | |_) |  _ <| |_| |  _  |
+                |____/|_| \\_\\\\___/|_| |_|\
+                
+                Type something:\s
+                """;
         System.out.println(logo);
 
         Scanner in = new Scanner(System.in);
@@ -53,21 +62,31 @@ public class Bruh {
                 }
                 break;
             case "todo":
-                tasks[Task.getNumberOfTasks()] = new Todo(input[1]);
+                Todo newToDo = new Todo(input[1]);
+                tasks[Task.getNumberOfTasks() - 1] = newToDo;
+                System.out.println("Added todo: \n" + newToDo + "\n" + "You now have " + Task.getNumberOfTasks() + " tasks.");
                 break;
             case "deadline":
                 String[] deadlineInput = input[1].split(" /by ", 2);
-                tasks[Task.getNumberOfTasks()] = new Deadline(deadlineInput[0], deadlineInput[1]);
+                Deadline newDeadline = new Deadline(deadlineInput[0], deadlineInput[1]);
+                tasks[Task.getNumberOfTasks() - 1] = newDeadline;
+                System.out.println("Added deadline: \n" + newDeadline + "\n" + "You now have " + Task.getNumberOfTasks() + " tasks.");
                 break;
             case "event":
                 String[] eventInput = input[1].split((" /from | /to "), 3);
-                tasks[Task.getNumberOfTasks()] = new Event(eventInput[0], eventInput[1], eventInput[2]);
+                Event newEvent = new Event(eventInput[0], eventInput[1], eventInput[2]);
+                tasks[Task.getNumberOfTasks() - 1] = newEvent;
+                System.out.println("Added event: \n" + newEvent + "\n" + "You now have " + Task.getNumberOfTasks() + " tasks.");
                 break;
             case "mark":
-                getTaskByIndex(tasks, input[1]).setDone();
+                Task taskToMark = getTaskByIndex(tasks, input[1]);
+                taskToMark.setDone();
+                System.out.println("Marked as done: " + taskToMark);
                 break;
             case "unmark":
-                getTaskByIndex(tasks, input[1]).setUndone();
+                Task taskToUnmark = getTaskByIndex(tasks, input[1]);
+                taskToUnmark.setUndone();
+                System.out.println("Marked as undone: " + taskToUnmark);
                 break;
             default:
                 System.out.println("Huh?...");
@@ -83,8 +102,12 @@ public class Bruh {
     }
 
     private static Task getTaskByIndex(Task[] tasks, String indexString) throws WrongTaskNumberException {
-        int index = Integer.parseInt(indexString) - 1;
-        if (index < 0 || index >= Task.getNumberOfTasks()) throw new WrongTaskNumberException();
-        return tasks[index];
+        try {
+            int index = Integer.parseInt(indexString) - 1;
+            if (index < 0 || index >= Task.getNumberOfTasks()) throw new WrongTaskNumberException();
+            return tasks[index];
+        } catch (NumberFormatException e) {
+            throw new WrongTaskNumberException();
+        }
     }
 }

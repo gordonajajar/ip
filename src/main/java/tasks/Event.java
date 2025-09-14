@@ -1,3 +1,7 @@
+package tasks;
+
+import exceptions.EmptyDescriptionException;
+
 public class Event extends Task {
     private String from;
     private String to;
@@ -6,7 +10,6 @@ public class Event extends Task {
         super(description);
         this.from = from;
         this.to = to;
-        System.out.println("Added event: \n" + this.toString() + "\n" + "You now have " + Task.getNumberOfTasks() + " tasks.");
     }
 
     @Override
