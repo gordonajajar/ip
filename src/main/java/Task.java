@@ -5,7 +5,7 @@ public class Task {
     private String description;
     private boolean isDone;
 
-    public Task(String description) {
+    public Task(String description) throws EmptyDescriptionException {
         this.setDescription(description);
         this.isDone = false;
         numberOfTasks++;
@@ -27,10 +27,9 @@ public class Task {
         return description;
     }
 
-    public void setDescription(String description) {
-        if (description.isEmpty()) {
-            this.description = "Undefined task";
-            return;
+    public void setDescription(String description) throws EmptyDescriptionException {
+        if (description.isBlank()) {
+            throw new EmptyDescriptionException();
         }
         this.description = description;
     }
@@ -39,8 +38,14 @@ public class Task {
         return isDone;
     }
 
-    public void setDone(boolean done) {
-        isDone = done;
+    public void setDone() {
+        isDone = true;
+        System.out.println("Marked as done: [X] " + this.getDescription());
+    }
+
+    public void setUndone() {
+        isDone = false;
+        System.out.println("Marked as undone: [ ] " + this.getDescription());
     }
 
     @Override
