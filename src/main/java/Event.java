@@ -2,11 +2,11 @@ public class Event extends Task {
     private String from;
     private String to;
 
-    public Event(String description, String from, String to) {
+    public Event(String description, String from, String to) throws EmptyDescriptionException {
         super(description);
         this.from = from;
         this.to = to;
-        System.out.println("Added event: \n" + this.toString() + ".\n" + "You now have " + Task.getNumberOfTasks() + " tasks.");
+        System.out.println("Added event: \n" + this.toString() + "\n" + "You now have " + Task.getNumberOfTasks() + " tasks.");
     }
 
     @Override
