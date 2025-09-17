@@ -1,7 +1,5 @@
 package tasks;
 
-import java.util.Arrays;
-
 import exceptions.EmptyDescriptionException;
 
 public class Todo extends Task {
