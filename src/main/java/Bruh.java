@@ -1,3 +1,5 @@
+import java.nio.file.Files;
+import java.util.List;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileWriter;
@@ -14,6 +16,8 @@ public class Bruh {
 
     public static final int MAX_TASKS_LENGTH = 100;
 
+    public static final String filePath = "./data/tasks.txt";
+
     public static void main(String[] args) {
         String logo = """
                 Hello! I'm:
@@ -29,7 +33,15 @@ public class Bruh {
 
         Scanner in = new Scanner(System.in);
         String line;
-        Task[] tasks = new Task[MAX_TASKS_LENGTH];
+        Task[] tasks;
+
+        File f = new File(filePath);
+        try {
+            tasks = loadTasksFromDisk(f);
+        } catch (EmptyDescriptionException | IOException e) {
+            System.out.println("Problem reading " + filePath + ".");
+            return;
+        }
 
         while (true) {
             line = in.nextLine();
@@ -126,8 +138,38 @@ public class Bruh {
         }
     }
 
+    private static Task[] loadTasksFromDisk(File f) throws IOException, EmptyDescriptionException {
+        String absolutePath = f.getAbsolutePath();
+        if (!f.exists()) {
+            System.out.println("No old tasks found at " + absolutePath);
+            return new Task[MAX_TASKS_LENGTH];
+        }
+
+        List<String> lines = Files.readAllLines(f.toPath());
+        Task[] tasks = new Task[MAX_TASKS_LENGTH];
+        int taskNumber = 0;
+        System.out.println("Loading tasks from " + absolutePath);
+        for (String line : lines) {
+            switch (line.charAt(0)) {
+            case 'T':
+                tasks[taskNumber] = Todo.fromSaveString(line);
+                break;
+            case 'D':
+                tasks[taskNumber] = Deadline.fromSaveString(line);
+                break;
+            case 'E':
+                tasks[taskNumber] = Event.fromSaveString(line);
+                break;
+            default:
+                System.out.println("Unknown line encountered in " + absolutePath);
+            }
+            taskNumber++;
+        }
+        Task.setNumberOfTasks(taskNumber);
+        return tasks;
+    }
+
     private static void saveTasksToDisk(Task[] tasks) throws IOException {
-        String filePath = "./data/tasks.txt";
         File f = new File(filePath);
 
         // ensure parent directory exists
@@ -137,8 +179,8 @@ public class Bruh {
         }
 
         try (FileWriter fw = new FileWriter(f)) {
-            for (Task task : tasks) {
-                fw.write(task.toSaveString());
+            for (int i = 0; i < Task.getNumberOfTasks(); i++) {
+                fw.write(tasks[i].toSaveString());
                 fw.write(System.lineSeparator());
             }
         } catch (IOException e) {

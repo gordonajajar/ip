@@ -6,6 +6,8 @@ public class Task {
 
     private static int numberOfTasks = 0;
 
+    public static final String DELIMITER = " \\| ";
+
     private String description;
     private boolean isDone;
 
@@ -54,4 +56,9 @@ public class Task {
     public String toString() {
         return getDescription();
     }
+
+    public String toSaveString() {
+        return this.getDescription();
+    }
+
 }
