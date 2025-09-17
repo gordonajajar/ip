@@ -117,6 +117,7 @@ public class Bruh {
                 Task taskToRemove = getTaskByIndex(tasks, input[1]);
                 System.out.println("Successfully removed task " + input[1] + ":\n" + taskToRemove.toString());
                 tasks.remove(taskToRemove);
+                isTaskListModified = true;
                 break;
             default:
                 System.out.println("Huh?...");
