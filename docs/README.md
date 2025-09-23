@@ -182,5 +182,5 @@ Adios
 **Tips:**
 
 - Date and time must follow the format `dd/MM/yyyy HHmm`, with time being an optional argument.
-- Separate event times with ` /from ` and ` /to `, and deadlines with ` /by ` (spaces necessary).
+- Separate event times with ` /from ` and ` /to ` and deadlines with ` /by ` (spaces necessary).
 - The chatbot automatically saves your tasks after every change, and loads tasks on startup from `./data/tasks.txt`.
