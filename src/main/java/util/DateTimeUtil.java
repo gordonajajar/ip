@@ -6,6 +6,11 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Utility class for parsing, formatting, and pretty-printing dates and date-times.
+ * Supports multiple input formats for parsing, ISO format for saving, and
+ * human-readable formats for display.
+ */
 public class DateTimeUtil {
     private static final DateTimeFormatter DATE_ONLY = DateTimeFormatter.ofPattern("d/M/yyyy");
     private static final DateTimeFormatter DATE_TIME = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
@@ -15,8 +20,14 @@ public class DateTimeUtil {
     private static final DateTimeFormatter PRETTY_DATETIME = DateTimeFormatter.ofPattern("MMM dd yyyy, h:mm a");
 
     /**
-     * Parse dd/mm/yyyy or dd/mm/yyyy HHmm.
-     * If only date is given, time defaults to midnight.
+     * Parses a string into a LocalDateTime.
+     * Accepts either a date-only string in dd/MM/yyyy format or
+     * a date-time string in dd/MM/yyyy HHmm format.
+     * If only a date is given, the time defaults to midnight.
+     *
+     * @param input String representing the date or date-time.
+     * @return Parsed LocalDateTime.
+     * @throws DateTimeParseException If the input cannot be parsed in any recognized format.
      */
     public static LocalDateTime parseString(String input) {
         String s = input.trim();
@@ -34,10 +45,25 @@ public class DateTimeUtil {
         }
     }
 
+    /**
+     * Formats a LocalDateTime into a string suitable for saving.
+     * Uses ISO-8601 local date-time format.
+     *
+     * @param dateTime The date-time to format.
+     * @return ISO-formatted string representing the date-time.
+     */
     public static String formatForSave(LocalDateTime dateTime) {
         return dateTime.format(SAVE_FORMAT);
     }
 
+    /**
+     * Returns a human-readable string representation of the given date-time.
+     * If the time is midnight, only the date is shown. Otherwise, both date and
+     * time are included in a readable format (e.g., "Mar 15 2025, 2:30 PM").
+     *
+     * @param dateTime The date-time to format.
+     * @return Pretty-printed string for display.
+     */
     public static String prettyPrint(LocalDateTime dateTime) {
         if (dateTime.toLocalTime().equals(LocalTime.MIDNIGHT)) {
             return dateTime.toLocalDate().format(PRETTY_DATE);

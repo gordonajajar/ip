@@ -15,10 +15,25 @@ import tasks.Task;
 import tasks.Todo;
 import util.DateTimeUtil;
 
+/**
+ * Main class for the task management application.
+ * Handles user input, task creation, modification, deletion, and queries.
+ * Loads tasks from a file on startup and saves tasks after modifications.
+ */
 public class Bruh {
 
+    /**
+     * File path for storing tasks.
+     */
     public static final String filePath = "./data/tasks.txt";
 
+
+    /**
+     * Main entry point for the task application.
+     * Loads tasks from storage, then continuously reads user commands from the console.
+     *
+     * @param args Command-line arguments (unused).
+     */
     public static void main(String[] args) {
         String logo = """
                 Hello! I'm:
@@ -39,6 +54,7 @@ public class Bruh {
         ArrayList<Task> tasks;
 
         try {
+            System.out.println("Loading tasks from " + filePath);
             tasks = storage.loadTasks();
         } catch (EmptyDescriptionException | IOException e) {
             System.out.println("Problem reading " + filePath);
@@ -62,6 +78,15 @@ public class Bruh {
         }
     }
 
+    /**
+     * Parses and executes a user command.
+     *
+     * @param storage TaskStorage instance for saving/loading tasks.
+     * @param command The command string (e.g., "todo", "list").
+     * @param tasks   Current list of tasks.
+     * @param input   Full input split into command and arguments.
+     * @return true if the application should exit (e.g., "bye" command), false otherwise.
+     */
     private static boolean parseInput(TaskStorage storage, String command, ArrayList<Task> tasks, String[] input) {
         boolean isTaskListModified = false;
         try {
@@ -79,8 +104,12 @@ public class Bruh {
                     }
                 }
                 break;
+            case "find":
+                String keyword = input[1].trim();
+                printTasksByKeyword(storage, keyword);
+                break;
             case "todo":
-                Todo newToDo = new Todo(input[1]);
+                Todo newToDo = new Todo(input[1].trim());
                 tasks.add(newToDo);
                 System.out.println("Added todo: \n" + newToDo + "\n" + "You now have " + tasks.size() + " tasks.");
                 isTaskListModified = true;
@@ -90,7 +119,7 @@ public class Bruh {
                 if (deadlineInput[1].isBlank()) {
                     throw new EmptyDescriptionException();
                 }
-                Deadline newDeadline = new Deadline(deadlineInput[0], DateTimeUtil.parseString(deadlineInput[1]));
+                Deadline newDeadline = new Deadline(deadlineInput[0].trim(), DateTimeUtil.parseString(deadlineInput[1]));
                 tasks.add(newDeadline);
                 System.out.println("Added deadline: \n" + newDeadline + "\n" + "You now have " + tasks.size() + " tasks.");
                 isTaskListModified = true;
@@ -103,7 +132,7 @@ public class Bruh {
                 if (eventInput[1].isBlank() || eventInput[2].isBlank()) {
                     throw new EmptyDescriptionException();
                 }
-                Event newEvent = new Event(eventInput[0], eventInput[1], eventInput[2]);
+                Event newEvent = new Event(eventInput[0].trim(), eventInput[1].trim(), eventInput[2].trim());
                 tasks.add(newEvent);
                 System.out.println("Added event: \n" + newEvent + "\n" + "You now have " + tasks.size() + " tasks.");
                 isTaskListModified = true;
@@ -154,19 +183,32 @@ public class Bruh {
                 System.out.println("You entered an invalid task number; choose tasks 1 to " + tasks.size());
             }
         } catch (DateTimeParseException e) {
-            System.out.println("Invalid date & time format. Expected format: dd/mm/yyyy HHMM");
+            System.out.println("Invalid dateTime format. Expected: dd/MM/yyyy HHmm (time optional)");
         } catch (IOException e) {
             System.out.println("Error getting tasks from data");
         }
         return false;
     }
 
+    /**
+     * Prints a list of tasks to the console.
+     *
+     * @param tasks List of tasks to print.
+     */
     private static void printTasks(List<Task> tasks) {
         for (Task task : tasks) {
             System.out.println(task.toString());
         }
     }
 
+    /**
+     * Prints tasks that occur on the specified date.
+     *
+     * @param storage TaskStorage instance for querying tasks.
+     * @param date    The date to filter tasks by.
+     * @throws EmptyDescriptionException If a loaded task has an empty description.
+     * @throws IOException               If there is an error reading tasks from storage.
+     */
     private static void printTasksOnDate(TaskStorage storage, LocalDateTime date) throws EmptyDescriptionException, IOException {
         List<Task> tasks = storage.tasksOnDate(date.toLocalDate());
         if (tasks.isEmpty()) {
@@ -177,6 +219,35 @@ public class Bruh {
         }
     }
 
+
+    /**
+     * Prints tasks whose descriptions contain the specified keyword.
+     *
+     * @param storage TaskStorage instance for querying tasks.
+     * @param keyword Keyword to search for in task descriptions.
+     * @throws EmptyDescriptionException If a loaded task has an empty description.
+     * @throws IOException               If there is an error reading tasks from storage.
+     */
+    private static void printTasksByKeyword(TaskStorage storage, String keyword) throws EmptyDescriptionException, IOException {
+        List<Task> tasks = storage.tasksByKeyword(keyword);
+        if (tasks.isEmpty()) {
+            System.out.println("No tasks with keyword " + keyword);
+        } else {
+            System.out.println("Printing tasks with keyword: " + keyword);
+            printTasks(tasks);
+        }
+
+    }
+
+
+    /**
+     * Retrieves a task by its 1-based index in the list.
+     *
+     * @param tasks       List of tasks to search.
+     * @param indexString 1-based index as a string.
+     * @return Task at the specified index.
+     * @throws WrongTaskNumberException If the index is invalid or out of range.
+     */
     private static Task getTaskByIndex(ArrayList<Task> tasks, String indexString) throws WrongTaskNumberException {
         try {
             int index = Integer.parseInt(indexString) - 1;
@@ -186,6 +257,5 @@ public class Bruh {
             throw new WrongTaskNumberException();
         }
     }
-
 
 }
