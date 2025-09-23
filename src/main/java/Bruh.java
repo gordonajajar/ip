@@ -1,3 +1,6 @@
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -10,6 +13,7 @@ import tasks.Deadline;
 import tasks.Event;
 import tasks.Task;
 import tasks.Todo;
+import util.DateTimeUtil;
 
 public class Bruh {
 
@@ -86,10 +90,13 @@ public class Bruh {
                 if (deadlineInput[1].isBlank()) {
                     throw new EmptyDescriptionException();
                 }
-                Deadline newDeadline = new Deadline(deadlineInput[0], deadlineInput[1]);
+                Deadline newDeadline = new Deadline(deadlineInput[0], DateTimeUtil.parseString(deadlineInput[1]));
                 tasks.add(newDeadline);
                 System.out.println("Added deadline: \n" + newDeadline + "\n" + "You now have " + tasks.size() + " tasks.");
                 isTaskListModified = true;
+                break;
+            case "due":
+                printTasksOnDate(storage, DateTimeUtil.parseString(input[1]));
                 break;
             case "event":
                 String[] eventInput = input[1].split((" /from | /to "), 3);
@@ -114,6 +121,12 @@ public class Bruh {
                 isTaskListModified = true;
                 break;
             case "delete":
+                if (input[1].trim().equals("all")) {
+                    System.out.println("Removing all tasks");
+                    tasks.clear();
+                    isTaskListModified = true;
+                    break;
+                }
                 Task taskToRemove = getTaskByIndex(tasks, input[1]);
                 System.out.println("Successfully removed task " + input[1] + ":\n" + taskToRemove.toString());
                 tasks.remove(taskToRemove);
@@ -140,8 +153,28 @@ public class Bruh {
             } else {
                 System.out.println("You entered an invalid task number; choose tasks 1 to " + tasks.size());
             }
+        } catch (DateTimeParseException e) {
+            System.out.println("Invalid date & time format. Expected format: dd/mm/yyyy HHMM");
+        } catch (IOException e) {
+            System.out.println("Error getting tasks from data");
         }
         return false;
+    }
+
+    private static void printTasks(List<Task> tasks) {
+        for (Task task : tasks) {
+            System.out.println(task.toString());
+        }
+    }
+
+    private static void printTasksOnDate(TaskStorage storage, LocalDateTime date) throws EmptyDescriptionException, IOException {
+        List<Task> tasks = storage.tasksOnDate(date.toLocalDate());
+        if (tasks.isEmpty()) {
+            System.out.println("No tasks with date " + DateTimeUtil.prettyPrint(date));
+        } else {
+            System.out.println("Printing tasks with date: " + DateTimeUtil.prettyPrint(date));
+            printTasks(tasks);
+        }
     }
 
     private static Task getTaskByIndex(ArrayList<Task> tasks, String indexString) throws WrongTaskNumberException {

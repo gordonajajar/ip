@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,6 +69,20 @@ public class TaskStorage {
             System.out.println("Could not access " + file.toAbsolutePath() + " for writing :((");
             throw e;
         }
+    }
+
+    public List<Task> tasksOnDate(LocalDate date) throws EmptyDescriptionException, IOException {
+        ArrayList<Task> tasks = loadTasks();
+        List<Task> tasksOnDate = tasks.stream()
+                .filter(t -> {
+                    if (t instanceof Deadline) {
+                        LocalDateTime dateTime = ((Deadline) t).getBy();
+                        return dateTime.toLocalDate().equals(date);
+                    }
+                    return false;
+                })
+                .toList();
+        return tasksOnDate;
     }
 
 }
