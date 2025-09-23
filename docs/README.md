@@ -59,7 +59,7 @@ event Team meeting /from 25/09/2025 1400 /to 25/09/2025 1500
 
 ```
 Added event: 
-[ ] Team meeting (from: 25/09/2025 1400 to: 25/09/2025 1500)
+[E][ ] Team meeting (from: 25/09/2025 1400 to: 25/09/2025 1500)
 You now have 3 tasks.
 ```
 
@@ -181,6 +181,6 @@ Adios
 
 **Tips:**
 
-- Dates must follow the format `dd/MM/yyyy` and times (optional) in `HHmm` 24-hour format.
-- Separate event times with `/from` and `/to`, and deadlines with `/by`.
-- The chatbot automatically saves your tasks after every change.
+- Date and time must follow the format `dd/MM/yyyy HHmm`, with time being an optional argument.
+- Separate event times with ` /from ` and ` /to `, and deadlines with ` /by ` (spaces necessary).
+- The chatbot automatically saves your tasks after every change, and loads tasks on startup from `./data/tasks.txt`.
