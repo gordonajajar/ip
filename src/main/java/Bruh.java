@@ -175,7 +175,7 @@ public class Bruh {
         } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("Missing arguments!");
         } catch (EmptyDescriptionException e) {
-            System.out.println("Your description is empty, try again...");
+            System.out.println("An input field is empty, try again...");
         } catch (WrongTaskNumberException e) {
             if (tasks.isEmpty()) {
                 System.out.println("You have no tasks");
